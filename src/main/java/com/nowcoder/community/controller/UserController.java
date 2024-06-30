@@ -17,6 +17,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.awt.*;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
@@ -104,5 +105,29 @@ public class UserController {
 
     }
 
+    @RequestMapping(path = "/update/password", method = RequestMethod.POST)
+    public String updatePassword(String oldPassword, String newPassword, String confirmNewPassword, Model model) {
+        if (oldPassword == null) {
+            model.addAttribute("errorOld", "原密码不能为空");
+            return "site/setting";
+        }
+        if (newPassword == null) {
+            model.addAttribute("errorNew", "新密码不能为空");
+            return "site/setting";
+        }
+        if (!confirmNewPassword.equals(newPassword)) {
+            model.addAttribute("errorConfirm", "两次输入的密码不一致");
+            return "site/setting";
+        }
+        User user = hostHolder.getUser();
+        oldPassword = CommunityUtil.md5(oldPassword + user.getSalt());
+        if (!user.getPassword().equals(oldPassword)){
+            model.addAttribute("error", "原密码输入不正确");
+            return "site/setting";
+        }
+        newPassword = CommunityUtil.md5(newPassword + user.getSalt());
+        userService.updatePassword(user.getId(),newPassword);
+        return "redirect:/index";
+    }
 
 }
