@@ -31,4 +31,6 @@ public class AlphaInterceptor implements HandlerInterceptor {
     public void afterCompletion(HttpServletRequest request, HttpServletResponse response, Object handler, Exception ex) throws Exception {
         logger.debug("afterCompletion:" + handler.toString());
     }
+
+
 }
