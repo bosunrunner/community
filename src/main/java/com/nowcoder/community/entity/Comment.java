@@ -1,6 +1,6 @@
 package com.nowcoder.community.entity;
 
-import javax.xml.crypto.Data;
+import java.util.Date;
 
 public class Comment {
     private int id;
@@ -10,7 +10,7 @@ public class Comment {
     private int targetId;
     private String content;
     private int status;
-    private Data createTime;
+    private Date createTime;
 
     public int getId() {
         return id;
@@ -68,6 +68,14 @@ public class Comment {
         this.status = status;
     }
 
+    public Date getCreateTime() {
+        return createTime;
+    }
+
+    public void setCreateTime(Date createTime) {
+        this.createTime = createTime;
+    }
+
     @Override
     public String toString() {
         return "Comment{" +
@@ -82,11 +90,5 @@ public class Comment {
                 '}';
     }
 
-    public Data getCreateTime() {
-        return createTime;
-    }
 
-    public void setCreateTime(Data createTime) {
-        this.createTime = createTime;
-    }
 }
