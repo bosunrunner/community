@@ -8,7 +8,7 @@ public class Message {
     private int toId;
     private String conversationId;
     private String content;
-    private int status;
+    private int status;  // 0表示未读，1表示已读，2表示无效了
 
 
     public int getId() {
@@ -75,7 +75,7 @@ public class Message {
                 "id=" + id +
                 ", fromId=" + fromId +
                 ", toId=" + toId +
-                ", conversionId='" + conversationId + '\'' +
+                ", conversationId='" + conversationId + '\'' +
                 ", content='" + content + '\'' +
                 ", status=" + status +
                 ", createTime='" + createTime + '\'' +
