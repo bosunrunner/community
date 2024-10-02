@@ -7,11 +7,13 @@ import com.nowcoder.community.service.MessageService;
 import com.nowcoder.community.service.UserService;
 import com.nowcoder.community.util.CommunityUtil;
 import com.nowcoder.community.util.HostHolder;
-import org.apache.ibatis.binding.MapperMethod;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.ResponseBody;
 
 import java.util.*;
 
@@ -45,7 +47,7 @@ public class MessageController {
                 map.put("conversion", message);
                 map.put("letterCount", messageService.findLettersCount(message.getConversationId()));
                 map.put("unreadCount", messageService.findLettersUnreadCount(user.getId(), message.getConversationId()));
-                int targetId = user.getId() == message.getFromId() ? message.getToId() : message.getFromId();
+                int targetId = user.getId () == message.getFromId() ? message.getToId() : message.getFromId();
                 map.put("target", userService.findUserById(targetId));
 
                 conversions.add(map);
