@@ -2,8 +2,10 @@ package com.nowcoder.community.controller;
 
 import com.nowcoder.community.annotation.LoginRequired;
 import com.nowcoder.community.entity.User;
+import com.nowcoder.community.service.FollowerService;
 import com.nowcoder.community.service.LikeService;
 import com.nowcoder.community.service.UserService;
+import com.nowcoder.community.util.CommunityConstant;
 import com.nowcoder.community.util.CommunityUtil;
 import com.nowcoder.community.util.HostHolder;
 import jakarta.servlet.http.HttpServletResponse;
@@ -27,7 +29,7 @@ import java.io.OutputStream;
 
 @Controller
 @RequestMapping("/user")
-public class UserController {
+public class UserController implements CommunityConstant {
 
     private static final Logger logger = LoggerFactory.getLogger(UserController.class);
 
@@ -48,6 +50,11 @@ public class UserController {
 
     @Autowired
     private LikeService likeService;
+
+    @Autowired
+    private FollowController followController;
+    @Autowired
+    private FollowerService followerService;
 
     @LoginRequired
     @RequestMapping(path = "/setting", method = RequestMethod.GET)
@@ -143,12 +150,26 @@ public class UserController {
         if (user==null){
             throw new RuntimeException("该用户不存在");
         }
-
         // 用户
         model.addAttribute("user", user);
         // 点赞数量
         int count = likeService.findUserLikeCount(userId);
         model.addAttribute("likeCount", count);
+
+        // 关注数量
+        long followeeCount = followerService.findFolloweeCount(userId, ENTITY_TYPE_USER);
+        model.addAttribute("followeeCount", followeeCount);
+        // 粉丝数量
+        long followerCount = followerService.findFollowerCount(ENTITY_TYPE_USER,userId);
+        model.addAttribute("followerCount", followerCount);
+
+        // 当前用户是否已关注
+        boolean hasFollow = false;
+        if (hostHolder.getUser()!=null){
+            hasFollow = followerService.hasFollowing(hostHolder.getUser().getId(),ENTITY_TYPE_USER,userId);
+        }
+        model.addAttribute("hasFollow", hasFollow);
+
         return "/site/profile";
 
     }
