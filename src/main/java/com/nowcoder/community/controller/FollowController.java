@@ -1,5 +1,7 @@
 package com.nowcoder.community.controller;
 
+import com.nowcoder.community.Event.EventProducer;
+import com.nowcoder.community.entity.Event;
 import com.nowcoder.community.entity.Page;
 import com.nowcoder.community.entity.User;
 import com.nowcoder.community.service.FollowerService;
@@ -29,12 +31,25 @@ public class FollowController implements CommunityConstant {
     @Autowired
     private UserService userService;
 
+    @Autowired
+    private EventProducer eventProducer;
+
+
     @RequestMapping(path = "/follow", method = RequestMethod.POST)
     @ResponseBody
     public String follow(int entityType, int entityId) {
         User user = hostHolder.getUser();
 
         followerService.follow(user.getId(), entityType, entityId);
+
+        // 触发关注事件
+        Event event = new Event()
+                .setTopic(TOPIC_FOLLOW)
+                .setUserId(user.getId())
+                .setEntityType(entityType)
+                .setEntityId(entityId)
+                .setEntityUserId(entityId);
+        eventProducer.fireEvent(event);
 
         return CommunityUtil.getJSONString(0, "已关注");
     }
@@ -83,7 +98,7 @@ public class FollowController implements CommunityConstant {
         model.addAttribute("user", user);
         page.setLimit(5);
         page.setPath("/followers/" + userId);
-        page.setRows((int) followerService.findFollowerCount(CommunityConstant.ENTITY_TYPE_USER,userId));
+        page.setRows((int) followerService.findFollowerCount(CommunityConstant.ENTITY_TYPE_USER, userId));
 
         List<Map<String, Object>> userList = followerService.findFollowers(userId, page.getOffset(), page.getLimit());
 
